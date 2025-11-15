@@ -1,17 +1,32 @@
 import telebot
-import os
-from dotenv import load_dotenv
 
-load_dotenv()  # Загружает .env файл
-# Создаем экземпляр бота
-bot = telebot.TeleBot(os.getenv('BOT_TOKEN'))
-# Функция, обрабатывающая команду /start
-@bot.message_handler(commands=["start"])
-def start(m, res=False):
-    bot.send_message(m.chat.id, 'Я на связи. Напиши мне что-нибудь )')
-# Получение сообщений от юзера
-@bot.message_handler(content_types=["text"])
-def handle_text(message):
-    bot.send_message(message.chat.id, 'Вы написали: ' + message.text)
-# Запускаем бота
-bot.polling(none_stop=True, interval=0)
+# --- 1. Вставьте свой токен ---
+# Замените 'ВАШ_ТОКЕН_БОТА' на токен, который вы получили от @BotFather
+TOKEN = 'ВАШ_ТОКЕН_БОТА'
+bot = telebot.TeleBot(TOKEN)
+
+# --- 2. Обработчик команды /start ---
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    """
+    Отвечает на команду /start
+    """
+    # message.chat.id - ID чата, куда отправлять сообщение
+    bot.send_message(message.chat.id, 
+                     "Привет! Я простой эхо-бот. Отправь мне любое сообщение, и я его повторю.")
+
+# --- 3. Обработчик любых текстовых сообщений (ЭХО) ---
+@bot.message_handler(content_types=['text'])
+def echo_all(message):
+    """
+    Повторяет (эхо) любое текстовое сообщение
+    """
+    # message.text - текст сообщения
+    bot.send_message(message.chat.id, message.text)
+
+# --- 4. Запуск бота ---
+# Бот начинает "слушать" новые сообщения
+print("Бот запущен. Нажмите Ctrl+C для остановки.")
+bot.polling(none_stop=True)
+
+
